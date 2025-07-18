@@ -1,13 +1,49 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import Layout from "@/components/Layout";
+import Dashboard from "@/components/Dashboard";
+import Orders from "@/components/Orders";
+import Inventory from "@/components/Inventory";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <Dashboard />;
+      case "orders":
+        return <Orders />;
+      case "inventory":
+        return <Inventory />;
+      case "reports":
+        return (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold">Reports</h1>
+            <p className="text-muted-foreground">Export sales and inventory reports</p>
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Reports section coming soon...</p>
+            </div>
+          </div>
+        );
+      case "admin":
+        return (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold">Admin Panel</h1>
+            <p className="text-muted-foreground">Manage meals, ingredients, and users</p>
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Admin panel coming soon...</p>
+            </div>
+          </div>
+        );
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
+      {renderContent()}
+    </Layout>
   );
 };
 
