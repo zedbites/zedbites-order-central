@@ -244,7 +244,7 @@ export default function Admin() {
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">${revenueStats.dailyRevenue.toFixed(2)}</div>
+                <div className="text-2xl font-bold">K{revenueStats.dailyRevenue.toFixed(2)}</div>
                 <p className="text-xs text-muted-foreground">+12.5% from yesterday</p>
               </CardContent>
             </Card>
@@ -478,7 +478,7 @@ export default function Admin() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">${revenueStats.dailyRevenue.toFixed(2)}</div>
+                <div className="text-3xl font-bold">K{revenueStats.dailyRevenue.toFixed(2)}</div>
                 <p className="text-sm text-green-600">+12.5% vs yesterday</p>
               </CardContent>
             </Card>
@@ -491,7 +491,7 @@ export default function Admin() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">${revenueStats.monthlyRevenue.toFixed(2)}</div>
+                <div className="text-3xl font-bold">K{revenueStats.monthlyRevenue.toFixed(2)}</div>
                 <p className="text-sm text-green-600">+8.3% vs last month</p>
               </CardContent>
             </Card>
@@ -504,7 +504,7 @@ export default function Admin() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">${revenueStats.avgOrderValue.toFixed(2)}</div>
+                <div className="text-3xl font-bold">K{revenueStats.avgOrderValue.toFixed(2)}</div>
                 <p className="text-sm text-blue-600">Per order value</p>
               </CardContent>
             </Card>
@@ -536,7 +536,7 @@ export default function Admin() {
                     <div className="w-20 bg-secondary rounded-full h-2">
                       <div className="bg-primary h-2 rounded-full" style={{ width: "45%" }}></div>
                     </div>
-                    <span className="font-bold">$1,278</span>
+                    <span className="font-bold">K1,278</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -545,7 +545,7 @@ export default function Admin() {
                     <div className="w-20 bg-secondary rounded-full h-2">
                       <div className="bg-primary h-2 rounded-full" style={{ width: "30%" }}></div>
                     </div>
-                    <span className="font-bold">$852</span>
+                    <span className="font-bold">K852</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -554,7 +554,7 @@ export default function Admin() {
                     <div className="w-20 bg-secondary rounded-full h-2">
                       <div className="bg-primary h-2 rounded-full" style={{ width: "20%" }}></div>
                     </div>
-                    <span className="font-bold">$568</span>
+                    <span className="font-bold">K568</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -563,7 +563,7 @@ export default function Admin() {
                     <div className="w-20 bg-secondary rounded-full h-2">
                       <div className="bg-primary h-2 rounded-full" style={{ width: "15%" }}></div>
                     </div>
-                    <span className="font-bold">$426</span>
+                    <span className="font-bold">K426</span>
                   </div>
                 </div>
               </CardContent>
@@ -587,22 +587,22 @@ export default function Admin() {
                     <TableRow>
                       <TableCell>Grilled Chicken Sandwich</TableCell>
                       <TableCell>32</TableCell>
-                      <TableCell>$415.68</TableCell>
+                      <TableCell>K415.68</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Caesar Salad</TableCell>
                       <TableCell>28</TableCell>
-                      <TableCell>$279.72</TableCell>
+                      <TableCell>K279.72</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Coffee</TableCell>
                       <TableCell>45</TableCell>
-                      <TableCell>$157.50</TableCell>
+                      <TableCell>K157.50</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Margherita Pizza</TableCell>
                       <TableCell>18</TableCell>
-                      <TableCell>$287.82</TableCell>
+                      <TableCell>K287.82</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -618,19 +618,19 @@ export default function Admin() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold">$1,420</div>
+                  <div className="text-2xl font-bold">K1,420</div>
                   <p className="text-sm text-muted-foreground">Credit Card (50%)</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">$852</div>
+                  <div className="text-2xl font-bold">K852</div>
                   <p className="text-sm text-muted-foreground">Cash (30%)</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">$426</div>
+                  <div className="text-2xl font-bold">K426</div>
                   <p className="text-sm text-muted-foreground">Mobile Pay (15%)</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">$142</div>
+                  <div className="text-2xl font-bold">K142</div>
                   <p className="text-sm text-muted-foreground">Other (5%)</p>
                 </div>
               </div>
@@ -824,7 +824,7 @@ export default function Admin() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="mealPrice">Price ($)</Label>
+                        <Label htmlFor="mealPrice">Price (K)</Label>
                         <Input
                           id="mealPrice"
                           type="number"
@@ -881,7 +881,7 @@ export default function Admin() {
                     <TableRow key={meal.id}>
                       <TableCell className="font-medium">{meal.name}</TableCell>
                       <TableCell>{meal.category}</TableCell>
-                      <TableCell>${meal.price.toFixed(2)}</TableCell>
+                      <TableCell>K{meal.price.toFixed(2)}</TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <Switch
@@ -975,7 +975,7 @@ export default function Admin() {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="ingredientCost">Cost per Unit ($)</Label>
+                        <Label htmlFor="ingredientCost">Cost per Unit (K)</Label>
                         <Input
                           id="ingredientCost"
                           type="number"
@@ -1027,7 +1027,7 @@ export default function Admin() {
                     <TableRow key={ingredient.id}>
                       <TableCell className="font-medium">{ingredient.name}</TableCell>
                       <TableCell>{ingredient.unit}</TableCell>
-                      <TableCell>${ingredient.costPerUnit.toFixed(2)}</TableCell>
+                      <TableCell>K{ingredient.costPerUnit.toFixed(2)}</TableCell>
                       <TableCell>{ingredient.supplier}</TableCell>
                       <TableCell>{ingredient.threshold}</TableCell>
                       <TableCell>
