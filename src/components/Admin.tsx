@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard, Receipt, TrendingDown } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import StoreIntegration from "./StoreIntegration";
 import ManualSalesEntry from "./ManualSalesEntry";
@@ -31,7 +32,9 @@ interface Meal {
   price: number;
   category: string;
   active: boolean;
-  description: string;
+  description?: string;
+  prepTime?: number;
+  calories?: number;
 }
 
 interface Ingredient {
@@ -103,7 +106,16 @@ export default function Admin() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "staff" as const, password: "" });
-  const [newMeal, setNewMeal] = useState({ name: "", price: 0, category: "", description: "" });
+  const [newMeal, setNewMeal] = useState({ 
+    id: '', 
+    name: "", 
+    price: 0, 
+    category: "", 
+    description: "", 
+    prepTime: 0, 
+    calories: 0, 
+    active: true 
+  });
   const [newIngredient, setNewIngredient] = useState({ name: "", unit: "", costPerUnit: 0, supplier: "", threshold: 0 });
 
   const handleAddUser = () => {
@@ -149,11 +161,13 @@ export default function Admin() {
       price: newMeal.price,
       category: newMeal.category,
       description: newMeal.description,
+      prepTime: newMeal.prepTime || undefined,
+      calories: newMeal.calories || undefined,
       active: true
     };
     
     setMeals(prev => [...prev, meal]);
-    setNewMeal({ name: "", price: 0, category: "", description: "" });
+    setNewMeal({ id: '', name: "", price: 0, category: "", description: "", prepTime: 0, calories: 0, active: true });
     toast({ title: "Success", description: "Meal added successfully!" });
   };
 
@@ -381,44 +395,166 @@ export default function Admin() {
           )}
 
           {activeSection === "meals" && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Meal Management</CardTitle>
-                <CardDescription>Manage menu items and pricing</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {meals.map((meal) => (
-                      <TableRow key={meal.id}>
-                        <TableCell className="font-medium">{meal.name}</TableCell>
-                        <TableCell>{meal.category}</TableCell>
-                        <TableCell>K{meal.price.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Badge variant={meal.active ? "default" : "secondary"}>
-                            {meal.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+            <div className="space-y-6">
+              {/* Add New Menu Item Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add New Menu Item</CardTitle>
+                  <CardDescription>Create new menu items with detailed information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="mealName">Item Name</Label>
+                      <Input
+                        id="mealName"
+                        placeholder="e.g., Grilled Chicken Burger"
+                        value={newMeal.name}
+                        onChange={(e) => setNewMeal({ ...newMeal, name: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mealCategory">Category</Label>
+                      <Select value={newMeal.category} onValueChange={(value) => setNewMeal({ ...newMeal, category: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Appetizers">Appetizers</SelectItem>
+                          <SelectItem value="Main Course">Main Course</SelectItem>
+                          <SelectItem value="Burgers">Burgers</SelectItem>
+                          <SelectItem value="Pizza">Pizza</SelectItem>
+                          <SelectItem value="Pasta">Pasta</SelectItem>
+                          <SelectItem value="Salads">Salads</SelectItem>
+                          <SelectItem value="Desserts">Desserts</SelectItem>
+                          <SelectItem value="Beverages">Beverages</SelectItem>
+                          <SelectItem value="Sides">Sides</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mealPrice">Price (Kwacha)</Label>
+                      <Input
+                        id="mealPrice"
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={newMeal.price}
+                        onChange={(e) => setNewMeal({ ...newMeal, price: parseFloat(e.target.value) || 0 })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mealDescription">Description</Label>
+                      <Textarea
+                        id="mealDescription"
+                        placeholder="Brief description of the item"
+                        value={newMeal.description || ''}
+                        onChange={(e) => setNewMeal({ ...newMeal, description: e.target.value })}
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mealPrepTime">Prep Time (minutes)</Label>
+                      <Input
+                        id="mealPrepTime"
+                        type="number"
+                        placeholder="15"
+                        value={newMeal.prepTime || ''}
+                        onChange={(e) => setNewMeal({ ...newMeal, prepTime: parseInt(e.target.value) || 0 })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mealCalories">Calories</Label>
+                      <Input
+                        id="mealCalories"
+                        type="number"
+                        placeholder="350"
+                        value={newMeal.calories || ''}
+                        onChange={(e) => setNewMeal({ ...newMeal, calories: parseInt(e.target.value) || 0 })}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-6 flex gap-2">
+                    <Button onClick={handleAddMeal} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Menu Item
+                    </Button>
+                    <Button variant="outline" onClick={() => setNewMeal({ id: '', name: '', category: '', price: 0, description: '', prepTime: 0, calories: 0, active: true })}>
+                      Clear Form
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Menu Items Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Menu Items Management</CardTitle>
+                  <CardDescription>Manage all menu items, pricing, and availability</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Prep Time</TableHead>
+                        <TableHead>Calories</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {meals.map((meal) => (
+                        <TableRow key={meal.id}>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{meal.name}</div>
+                              {meal.description && (
+                                <div className="text-sm text-muted-foreground">{meal.description}</div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{meal.category}</Badge>
+                          </TableCell>
+                          <TableCell className="font-medium">K{meal.price.toFixed(2)}</TableCell>
+                          <TableCell>{meal.prepTime ? `${meal.prepTime} min` : '-'}</TableCell>
+                          <TableCell>{meal.calories ? `${meal.calories} cal` : '-'}</TableCell>
+                          <TableCell>
+                            <Badge variant={meal.active ? "default" : "secondary"}>
+                              {meal.active ? "Active" : "Inactive"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleToggleMealStatus(meal.id)}
+                              >
+                                {meal.active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                size="sm"
+                                onClick={() => handleDeleteMeal(meal.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {activeSection === "ingredients" && (
