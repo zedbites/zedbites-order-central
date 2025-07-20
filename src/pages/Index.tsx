@@ -5,9 +5,35 @@ import Orders from "@/components/Orders";
 import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
 import AdminLogin from "@/components/AdminLogin";
+import FloatingActionButton from "@/components/layout/FloatingActionButton";
+import { useToast } from "@/hooks/use-toast";
+import { useKeyboardShortcuts, defaultShortcuts } from "@/utils/KeyboardShortcuts";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { toast } = useToast();
+
+  // Keyboard shortcuts
+  const shortcuts = [
+    ...defaultShortcuts.map(shortcut => ({
+      ...shortcut,
+      action: () => {
+        if (shortcut.key === 'd') setActiveTab('dashboard');
+        else if (shortcut.key === 'o') setActiveTab('orders');
+        else if (shortcut.key === 'i') setActiveTab('inventory');
+        else shortcut.action();
+      }
+    }))
+  ];
+
+  useKeyboardShortcuts(shortcuts);
+
+  const handleSearch = (query: string) => {
+    toast({
+      title: "Search",
+      description: `Searching for: ${query}`,
+    });
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -37,9 +63,17 @@ const Index = () => {
   };
 
   return (
-    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
-      {renderContent()}
-    </Layout>
+    <>
+      <Layout 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        onSearch={handleSearch}
+        notifications={3}
+      >
+        {renderContent()}
+      </Layout>
+      <FloatingActionButton />
+    </>
   );
 };
 

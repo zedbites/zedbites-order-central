@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
   LayoutDashboard, 
   ShoppingCart, 
@@ -8,13 +9,18 @@ import {
   Settings,
   Menu,
   X,
-  ChefHat
+  ChefHat,
+  Bell,
+  Search
 } from "lucide-react";
+import SearchBar from "@/components/common/SearchBar";
 
 interface LayoutProps {
   children: React.ReactNode;
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onSearch?: (query: string) => void;
+  notifications?: number;
 }
 
 const navigation = [
@@ -25,28 +31,75 @@ const navigation = [
   { id: 'admin', name: 'Admin', icon: Settings },
 ];
 
-export default function Layout({ children, activeTab, onTabChange }: LayoutProps) {
+export default function Layout({ 
+  children, 
+  activeTab, 
+  onTabChange, 
+  onSearch,
+  notifications = 0 
+}: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile menu button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </Button>
+      {/* Top Navigation Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-sm">
+        <div className="flex items-center justify-between h-16 px-4">
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden"
+          >
+            {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
+
+          {/* Logo - visible on mobile */}
+          <div className="flex items-center space-x-3 md:hidden">
+            <img 
+              src="/lovable-uploads/98aff0b8-870a-4539-b5e4-fbe9d35e1ec3.png" 
+              alt="ZedBites Logo" 
+              className="w-8 h-8"
+            />
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Store Manager
+            </h1>
+          </div>
+
+          {/* Search Bar */}
+          {onSearch && (
+            <div className="hidden md:block flex-1 max-w-md mx-4">
+              <SearchBar 
+                placeholder="Search orders, inventory, customers..." 
+                onSearch={onSearch}
+              />
+            </div>
+          )}
+
+          {/* Notifications */}
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" className="relative">
+              <Bell className="h-4 w-4" />
+              {notifications > 0 && (
+                <Badge 
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
+                  variant="destructive"
+                >
+                  {notifications > 9 ? '9+' : notifications}
+                </Badge>
+              )}
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-card shadow-elegant transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-card shadow-elegant transform transition-transform duration-300 ease-in-out mt-16 ${
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0`}>
-        {/* Logo */}
-        <div className="flex items-center justify-center h-16 px-4 border-b border-border">
+        {/* Logo - Desktop */}
+        <div className="hidden md:flex items-center justify-center h-16 px-4 border-b border-border">
           <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/98aff0b8-870a-4539-b5e4-fbe9d35e1ec3.png" 
@@ -82,8 +135,8 @@ export default function Layout({ children, activeTab, onTabChange }: LayoutProps
       </div>
 
       {/* Main content */}
-      <div className="md:ml-64">
-        <div className="p-4 md:p-8">
+      <div className="md:ml-64 pt-16">
+        <div className="p-4 md:p-8 animate-fade-in">
           {children}
         </div>
       </div>
@@ -91,7 +144,7 @@ export default function Layout({ children, activeTab, onTabChange }: LayoutProps
       {/* Mobile overlay */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden"
+          className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden mt-16"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

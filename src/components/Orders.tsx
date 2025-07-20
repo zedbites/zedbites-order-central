@@ -20,6 +20,8 @@ import ManualOrderEntry from "./ManualOrderEntry";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Orders() {
+  const [activeView, setActiveView] = useState("all");
+  const { toast } = useToast();
   const [orders, setOrders] = useState([
     {
       id: "ORD-001",
@@ -76,8 +78,6 @@ export default function Orders() {
       estimatedDelivery: "10:15 AM"
     }
   ]);
-
-  const { toast } = useToast();
 
   const handleLocationUpdate = (orderId: string, location: { lat: number; lng: number }) => {
     setOrders(prevOrders => 
