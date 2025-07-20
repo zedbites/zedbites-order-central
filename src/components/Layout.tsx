@@ -8,7 +8,8 @@ import {
   BarChart3, 
   Settings,
   Menu,
-  X
+  X,
+  ChefHat
 } from "lucide-react";
 
 interface LayoutProps {
@@ -21,6 +22,7 @@ const navigation = [
   { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
   { id: 'orders', name: 'Orders', icon: ShoppingCart },
   { id: 'inventory', name: 'Inventory', icon: Package },
+  { id: 'recipes', name: 'Recipes', icon: ChefHat },
   { id: 'reports', name: 'Reports', icon: BarChart3 },
   { id: 'admin', name: 'Admin', icon: Settings },
 ];
