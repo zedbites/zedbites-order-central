@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   Clock, 
   ChefHat, 
@@ -10,11 +11,14 @@ import {
   CheckCircle,
   Phone,
   MapPin,
-  User
+  User,
+  Navigation
 } from "lucide-react";
+import DeliveryTracker from "./DeliveryTracker";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Orders() {
-  const [orders] = useState([
+  const [orders, setOrders] = useState([
     {
       id: "ORD-001",
       customer: "John Mukambo",
@@ -70,6 +74,37 @@ export default function Orders() {
       estimatedDelivery: "10:15 AM"
     }
   ]);
+
+  const { toast } = useToast();
+
+  const handleLocationUpdate = (orderId: string, location: { lat: number; lng: number }) => {
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === orderId 
+          ? { 
+              ...order, 
+              currentLocation: { 
+                ...location, 
+                timestamp: new Date() 
+              } 
+            }
+          : order
+      )
+    );
+  };
+
+  const handleStatusUpdate = (orderId: string, newStatus: string) => {
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === orderId ? { ...order, status: newStatus } : order
+      )
+    );
+    
+    toast({
+      title: "Order Updated",
+      description: `Order ${orderId} status updated to ${newStatus}`,
+    });
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -170,16 +205,34 @@ export default function Orders() {
           {order.status !== 'delivered' && (
             <Button 
               className="flex-1"
-              onClick={() => {
-                // Handle status update
-                console.log(`Updating ${order.id} to ${getNextStatus(order.status)}`);
-              }}
+              onClick={() => handleStatusUpdate(order.id, getNextStatus(order.status))}
             >
               {getNextStatusLabel(order.status)}
             </Button>
           )}
-          <Button variant="outline" size="sm">
-            Contact
+          {order.status === 'dispatched' && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Navigation className="h-4 w-4 mr-1" />
+                  Track
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Delivery Tracking - {order.id}</DialogTitle>
+                </DialogHeader>
+                <DeliveryTracker 
+                  order={order}
+                  onLocationUpdate={handleLocationUpdate}
+                  onStatusUpdate={handleStatusUpdate}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+          <Button variant="outline" size="sm" onClick={() => window.open(`tel:${order.phone}`)}>
+            <Phone className="h-4 w-4 mr-1" />
+            Call
           </Button>
         </div>
       </CardContent>
