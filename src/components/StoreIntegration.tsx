@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Globe, Download, RotateCcw, Key, Store, Package, ShoppingCart } from "lucide-react";
+import { Globe, Download, RotateCcw, Key, Store, Package, ShoppingCart, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { FirecrawlService } from "@/utils/FirecrawlService";
 
