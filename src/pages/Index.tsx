@@ -5,6 +5,7 @@ import Orders from "@/components/Orders";
 import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
 import AdminLogin from "@/components/AdminLogin";
+import StoreIntegration from "@/components/StoreIntegration";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -19,6 +20,8 @@ const Index = () => {
         return <Inventory />;
       case "recipes":
         return <Recipes />;
+      case "integration":
+        return <StoreIntegration />;
       case "reports":
         return (
           <div className="space-y-6">
