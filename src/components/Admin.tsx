@@ -233,6 +233,61 @@ export default function Admin() {
           
           <Card 
             className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("meals")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Utensils className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Meals</h3>
+              <p className="text-xs text-muted-foreground mt-1">Menu items</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("ingredients")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Package className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Ingredients</h3>
+              <p className="text-xs text-muted-foreground mt-1">Inventory</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("hr")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Users className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">HR Stats</h3>
+              <p className="text-xs text-muted-foreground mt-1">Staff metrics</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("revenue")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <DollarSign className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Revenue</h3>
+              <p className="text-xs text-muted-foreground mt-1">Sales data</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("payroll")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <CreditCard className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Payroll</h3>
+              <p className="text-xs text-muted-foreground mt-1">Staff payments</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
             onClick={() => setActiveSection("sales-entry")}
           >
             <CardContent className="flex flex-col items-center justify-center p-6 text-center">
@@ -289,9 +344,247 @@ export default function Admin() {
                 <CardDescription>Manage system users and their roles</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>User management functionality</p>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">{user.role}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={user.active ? "default" : "secondary"}>
+                            {user.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
+          )}
+
+          {activeSection === "meals" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Meal Management</CardTitle>
+                <CardDescription>Manage menu items and pricing</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {meals.map((meal) => (
+                      <TableRow key={meal.id}>
+                        <TableCell className="font-medium">{meal.name}</TableCell>
+                        <TableCell>{meal.category}</TableCell>
+                        <TableCell>K{meal.price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={meal.active ? "default" : "secondary"}>
+                            {meal.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === "ingredients" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Ingredient Management</CardTitle>
+                <CardDescription>Manage ingredients, suppliers, and costs</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Unit</TableHead>
+                      <TableHead>Cost per Unit</TableHead>
+                      <TableHead>Supplier</TableHead>
+                      <TableHead>Threshold</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ingredients.map((ingredient) => (
+                      <TableRow key={ingredient.id}>
+                        <TableCell className="font-medium">{ingredient.name}</TableCell>
+                        <TableCell>{ingredient.unit}</TableCell>
+                        <TableCell>K{ingredient.costPerUnit.toFixed(2)}</TableCell>
+                        <TableCell>{ingredient.supplier}</TableCell>
+                        <TableCell>{ingredient.threshold}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeSection === "hr" && (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Employee Overview
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between">
+                    <span>Total Employees:</span>
+                    <span className="font-bold">{hrStats.totalEmployees}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Active Today:</span>
+                    <span className="font-bold text-green-600">{hrStats.activeEmployees}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Attendance Rate:</span>
+                    <span className="font-bold text-green-600">{hrStats.attendanceRate}%</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Work Hours
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between">
+                    <span>Avg Weekly Hours:</span>
+                    <span className="font-bold">{hrStats.avgWorkHours}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Pending Leaves:</span>
+                    <span className="font-bold text-blue-600">{hrStats.pendingLeaves}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeSection === "revenue" && (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" />
+                    Daily Revenue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">K{revenueStats.dailyRevenue.toFixed(2)}</div>
+                  <p className="text-sm text-green-600">+12.5% vs yesterday</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Monthly Revenue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">K{revenueStats.monthlyRevenue.toFixed(2)}</div>
+                  <p className="text-sm text-green-600">+8.3% vs last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5" />
+                    Average Order
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">K{revenueStats.avgOrderValue.toFixed(2)}</div>
+                  <p className="text-sm text-blue-600">Per order value</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Profit Margin
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{revenueStats.profitMargin}%</div>
+                  <p className="text-sm text-green-600">Above target</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeSection === "payroll" && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Monthly Payroll</CardTitle>
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">K45,680</div>
+                  <p className="text-xs text-muted-foreground">+8% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Employees Paid</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">22</div>
+                  <p className="text-xs text-muted-foreground">of 24 total staff</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">2</div>
+                  <p className="text-xs text-muted-foreground">K3,400 total</p>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {activeSection === "sales-entry" && <ManualSalesEntry />}
