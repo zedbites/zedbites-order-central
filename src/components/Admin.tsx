@@ -10,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard, Receipt, TrendingDown } from "lucide-react";
+import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard, Receipt, TrendingDown, ImageIcon, Upload } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import StoreIntegration from "./StoreIntegration";
 import ManualSalesEntry from "./ManualSalesEntry";
 import ExpenseManagement from "./ExpenseManagement";
@@ -35,6 +36,7 @@ interface Meal {
   description?: string;
   prepTime?: number;
   calories?: number;
+  imageUrl?: string;
 }
 
 interface Ingredient {
@@ -117,6 +119,8 @@ export default function Admin() {
     active: true 
   });
   const [newIngredient, setNewIngredient] = useState({ name: "", unit: "", costPerUnit: 0, supplier: "", threshold: 0 });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleAddUser = () => {
     if (!newUser.name || !newUser.email || !newUser.password) {
@@ -149,10 +153,47 @@ export default function Admin() {
     ));
   };
 
-  const handleAddMeal = () => {
+  const handleImageUpload = async (file: File) => {
+    if (!file) return null;
+    
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `meal-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('meal-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('meal-images')
+        .getPublicUrl(filePath);
+
+      toast({ title: "Success", description: "Image uploaded successfully!" });
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({ title: "Error", description: "Failed to upload image", variant: "destructive" });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleAddMeal = async () => {
     if (!newMeal.name || newMeal.price <= 0 || !newMeal.category) {
       toast({ title: "Error", description: "Please fill all required fields", variant: "destructive" });
       return;
+    }
+    
+    let imageUrl = undefined;
+    if (selectedFile) {
+      imageUrl = await handleImageUpload(selectedFile);
     }
     
     const meal: Meal = {
@@ -163,11 +204,13 @@ export default function Admin() {
       description: newMeal.description,
       prepTime: newMeal.prepTime || undefined,
       calories: newMeal.calories || undefined,
+      imageUrl,
       active: true
     };
     
     setMeals(prev => [...prev, meal]);
     setNewMeal({ id: '', name: "", price: 0, category: "", description: "", prepTime: 0, calories: 0, active: true });
+    setSelectedFile(null);
     toast({ title: "Success", description: "Meal added successfully!" });
   };
 
@@ -473,13 +516,66 @@ export default function Admin() {
                         onChange={(e) => setNewMeal({ ...newMeal, calories: parseInt(e.target.value) || 0 })}
                       />
                     </div>
+                    
+                    {/* Image Upload Section */}
+                    <div className="col-span-full space-y-2">
+                      <Label htmlFor="mealImage">Menu Item Image</Label>
+                      <div className="flex items-center gap-4">
+                        <Input
+                          id="mealImage"
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setSelectedFile(file);
+                            }
+                          }}
+                          className="flex-1"
+                        />
+                        {selectedFile && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <ImageIcon className="h-4 w-4" />
+                            {selectedFile.name}
+                          </div>
+                        )}
+                      </div>
+                      {selectedFile && (
+                        <div className="mt-2">
+                          <img
+                            src={URL.createObjectURL(selectedFile)}
+                            alt="Preview"
+                            className="w-32 h-32 object-cover rounded-lg border"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="mt-6 flex gap-2">
-                    <Button onClick={handleAddMeal} className="flex items-center gap-2">
-                      <Plus className="h-4 w-4" />
-                      Add Menu Item
+                    <Button 
+                      onClick={handleAddMeal} 
+                      className="flex items-center gap-2"
+                      disabled={isUploading}
+                    >
+                      {isUploading ? (
+                        <>
+                          <Upload className="h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4" />
+                          Add Menu Item
+                        </>
+                      )}
                     </Button>
-                    <Button variant="outline" onClick={() => setNewMeal({ id: '', name: '', category: '', price: 0, description: '', prepTime: 0, calories: 0, active: true })}>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setNewMeal({ id: '', name: '', category: '', price: 0, description: '', prepTime: 0, calories: 0, active: true });
+                        setSelectedFile(null);
+                      }}
+                    >
                       Clear Form
                     </Button>
                   </div>
@@ -496,6 +592,7 @@ export default function Admin() {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead>Image</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead>Price</TableHead>
@@ -506,16 +603,29 @@ export default function Admin() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {meals.map((meal) => (
-                        <TableRow key={meal.id}>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{meal.name}</div>
-                              {meal.description && (
-                                <div className="text-sm text-muted-foreground">{meal.description}</div>
-                              )}
-                            </div>
-                          </TableCell>
+                       {meals.map((meal) => (
+                         <TableRow key={meal.id}>
+                           <TableCell>
+                             {meal.imageUrl ? (
+                               <img 
+                                 src={meal.imageUrl} 
+                                 alt={meal.name}
+                                 className="w-16 h-16 object-cover rounded-lg"
+                               />
+                             ) : (
+                               <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
+                                 <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                               </div>
+                             )}
+                           </TableCell>
+                           <TableCell>
+                             <div>
+                               <div className="font-medium">{meal.name}</div>
+                               {meal.description && (
+                                 <div className="text-sm text-muted-foreground">{meal.description}</div>
+                               )}
+                             </div>
+                           </TableCell>
                           <TableCell>
                             <Badge variant="outline">{meal.category}</Badge>
                           </TableCell>
