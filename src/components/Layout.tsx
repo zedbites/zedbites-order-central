@@ -47,9 +47,14 @@ export default function Layout({ children, activeTab, onTabChange }: LayoutProps
       } md:translate-x-0`}>
         {/* Logo */}
         <div className="flex items-center justify-center h-16 px-4 border-b border-border">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            ZedBites Manager
-          </h1>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+              <span className="text-sm font-bold text-white">Z</span>
+            </div>
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              ZedBites Store Manager
+            </h1>
+          </div>
         </div>
 
         {/* Navigation */}
