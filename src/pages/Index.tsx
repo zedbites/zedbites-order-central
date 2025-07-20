@@ -6,6 +6,7 @@ import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
 import AdminLogin from "@/components/AdminLogin";
 import FloatingActionButton from "@/components/layout/FloatingActionButton";
+import { ShortcutsDialog } from "@/components/ShortcutsDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useKeyboardShortcuts, defaultShortcuts } from "@/utils/KeyboardShortcuts";
 
@@ -64,6 +65,7 @@ const Index = () => {
 
   return (
     <>
+      <ShortcutsDialog />
       <Layout 
         activeTab={activeTab} 
         onTabChange={setActiveTab}
