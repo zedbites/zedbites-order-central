@@ -6,6 +6,7 @@ import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
 import AdminLogin from "@/components/AdminLogin";
 import FloatingActionButton from "@/components/layout/FloatingActionButton";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { ShortcutsDialog } from "@/components/ShortcutsDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useKeyboardShortcuts, defaultShortcuts } from "@/utils/KeyboardShortcuts";
@@ -65,6 +66,7 @@ const Index = () => {
 
   return (
     <>
+      <InstallPrompt />
       <ShortcutsDialog />
       <Layout 
         activeTab={activeTab} 
