@@ -12,9 +12,11 @@ import {
   Phone,
   MapPin,
   User,
-  Navigation
+  Navigation,
+  Plus
 } from "lucide-react";
 import DeliveryTracker from "./DeliveryTracker";
+import ManualOrderEntry from "./ManualOrderEntry";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Orders() {
@@ -251,12 +253,16 @@ export default function Orders() {
 
       {/* Order Tabs */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="all">All ({orders.length})</TabsTrigger>
           <TabsTrigger value="placed">Placed ({filterOrdersByStatus('placed').length})</TabsTrigger>
           <TabsTrigger value="cooking">Cooking ({filterOrdersByStatus('cooking').length})</TabsTrigger>
           <TabsTrigger value="dispatched">Dispatched ({filterOrdersByStatus('dispatched').length})</TabsTrigger>
           <TabsTrigger value="delivered">Delivered ({filterOrdersByStatus('delivered').length})</TabsTrigger>
+          <TabsTrigger value="manual" className="flex items-center gap-1">
+            <Plus className="h-3 w-3" />
+            Manual Entry
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-6">
@@ -297,6 +303,10 @@ export default function Orders() {
               <OrderCard key={order.id} order={order} />
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="manual" className="mt-6">
+          <ManualOrderEntry />
         </TabsContent>
       </Tabs>
     </div>
