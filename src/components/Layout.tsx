@@ -24,7 +24,6 @@ const navigation = [
   { id: 'inventory', name: 'Inventory', icon: Package },
   { id: 'recipes', name: 'Recipes', icon: ChefHat },
   { id: 'reports', name: 'Reports', icon: BarChart3 },
-  { id: 'integration', name: 'Store Sync', icon: Settings },
   { id: 'admin', name: 'Admin', icon: Settings },
 ];
 

@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock } from "lucide-react";
+import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import StoreIntegration from "./StoreIntegration";
 
 interface User {
   id: string;
@@ -203,7 +204,7 @@ export default function Admin() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             Overview
@@ -227,6 +228,10 @@ export default function Admin() {
           <TabsTrigger value="revenue" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
             Revenue
+          </TabsTrigger>
+          <TabsTrigger value="store-sync" className="flex items-center gap-2">
+            <Globe className="h-4 w-4" />
+            Store Sync
           </TabsTrigger>
         </TabsList>
 
@@ -631,6 +636,11 @@ export default function Admin() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Store Sync Tab */}
+        <TabsContent value="store-sync" className="space-y-4">
+          <StoreIntegration />
         </TabsContent>
 
         {/* Users Tab */}
