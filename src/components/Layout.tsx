@@ -48,11 +48,13 @@ export default function Layout({ children, activeTab, onTabChange }: LayoutProps
         {/* Logo */}
         <div className="flex items-center justify-center h-16 px-4 border-b border-border">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-              <span className="text-sm font-bold text-white">Z</span>
-            </div>
+            <img 
+              src="/lovable-uploads/98aff0b8-870a-4539-b5e4-fbe9d35e1ec3.png" 
+              alt="ZedBites Logo" 
+              className="w-10 h-10"
+            />
             <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              ZedBites Store Manager
+              Store Manager
             </h1>
           </div>
         </div>
