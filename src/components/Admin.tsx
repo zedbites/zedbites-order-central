@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff } from "lucide-react";
+import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface User {
@@ -40,9 +40,44 @@ interface Ingredient {
   threshold: number;
 }
 
+interface HRStats {
+  totalEmployees: number;
+  activeEmployees: number;
+  avgWorkHours: number;
+  attendanceRate: number;
+  pendingLeaves: number;
+}
+
+interface RevenueStats {
+  dailyRevenue: number;
+  monthlyRevenue: number;
+  totalOrders: number;
+  avgOrderValue: number;
+  profitMargin: number;
+  topSellingItem: string;
+}
+
 export default function Admin() {
   const { toast } = useToast();
-  
+
+  // HR and Revenue Stats
+  const [hrStats] = useState<HRStats>({
+    totalEmployees: 24,
+    activeEmployees: 22,
+    avgWorkHours: 38.5,
+    attendanceRate: 94.2,
+    pendingLeaves: 3
+  });
+
+  const [revenueStats] = useState<RevenueStats>({
+    dailyRevenue: 2840.50,
+    monthlyRevenue: 78650.25,
+    totalOrders: 156,
+    avgOrderValue: 18.23,
+    profitMargin: 23.5,
+    topSellingItem: "Grilled Chicken Sandwich"
+  });
+
   // Sample data
   const [users, setUsers] = useState<User[]>([
     { id: "1", name: "John Admin", email: "john@zedbites.com", role: "admin", active: true, createdAt: "2024-01-15" },
@@ -63,11 +98,6 @@ export default function Admin() {
   ]);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
-  const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(null);
-
-  // New item states
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "staff" as const, password: "" });
   const [newMeal, setNewMeal] = useState({ name: "", price: 0, category: "", description: "" });
   const [newIngredient, setNewIngredient] = useState({ name: "", unit: "", costPerUnit: 0, supplier: "", threshold: 0 });
@@ -172,8 +202,12 @@ export default function Admin() {
         </Badge>
       </div>
 
-      <Tabs defaultValue="users" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Users
@@ -186,11 +220,418 @@ export default function Admin() {
             <Package className="h-4 w-4" />
             Ingredients
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Settings
+          <TabsTrigger value="hr" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            HR Stats
+          </TabsTrigger>
+          <TabsTrigger value="revenue" className="flex items-center gap-2">
+            <DollarSign className="h-4 w-4" />
+            Revenue
           </TabsTrigger>
         </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Daily Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">${revenueStats.dailyRevenue.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">+12.5% from yesterday</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                <Package className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{revenueStats.totalOrders}</div>
+                <p className="text-xs text-muted-foreground">+8% from yesterday</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Staff</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{hrStats.activeEmployees}</div>
+                <p className="text-xs text-muted-foreground">of {hrStats.totalEmployees} total</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Attendance Rate</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{hrStats.attendanceRate}%</div>
+                <p className="text-xs text-muted-foreground">Above target</p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button className="w-full justify-start" variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Staff Member
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <Utensils className="h-4 w-4 mr-2" />
+                  Add Menu Item
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <Package className="h-4 w-4 mr-2" />
+                  Update Inventory
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  View Reports
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Badge variant="secondary">HR</Badge>
+                  <span className="text-sm">New employee Sarah joined</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="default">Revenue</Badge>
+                  <span className="text-sm">Daily target achieved</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline">Inventory</Badge>
+                  <span className="text-sm">Low stock alert: Chicken breast</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="secondary">Menu</Badge>
+                  <span className="text-sm">New item added: Caesar Wrap</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* HR Stats Tab */}
+        <TabsContent value="hr" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Employee Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span>Total Employees:</span>
+                  <span className="font-bold">{hrStats.totalEmployees}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Active Today:</span>
+                  <span className="font-bold text-green-600">{hrStats.activeEmployees}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>On Leave:</span>
+                  <span className="font-bold text-yellow-600">{hrStats.totalEmployees - hrStats.activeEmployees}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Pending Leaves:</span>
+                  <span className="font-bold text-blue-600">{hrStats.pendingLeaves}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Work Hours
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span>Avg Weekly Hours:</span>
+                  <span className="font-bold">{hrStats.avgWorkHours}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Attendance Rate:</span>
+                  <span className="font-bold text-green-600">{hrStats.attendanceRate}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Overtime Hours:</span>
+                  <span className="font-bold">24.5</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Late Arrivals:</span>
+                  <span className="font-bold text-red-600">8</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Performance
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <span>Customer Rating:</span>
+                  <span className="font-bold text-green-600">4.8/5</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Order Accuracy:</span>
+                  <span className="font-bold">97.2%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Avg Service Time:</span>
+                  <span className="font-bold">12 min</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Training Hours:</span>
+                  <span className="font-bold">156</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Staff Schedule</CardTitle>
+              <CardDescription>Today's shift assignments</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Employee</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Shift</TableHead>
+                    <TableHead>Hours</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Sarah Johnson</TableCell>
+                    <TableCell>Manager</TableCell>
+                    <TableCell>9:00 AM - 6:00 PM</TableCell>
+                    <TableCell>9h</TableCell>
+                    <TableCell><Badge variant="default">Present</Badge></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Mike Chen</TableCell>
+                    <TableCell>Chef</TableCell>
+                    <TableCell>10:00 AM - 7:00 PM</TableCell>
+                    <TableCell>9h</TableCell>
+                    <TableCell><Badge variant="default">Present</Badge></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Emma Davis</TableCell>
+                    <TableCell>Server</TableCell>
+                    <TableCell>11:00 AM - 8:00 PM</TableCell>
+                    <TableCell>9h</TableCell>
+                    <TableCell><Badge variant="destructive">Late</Badge></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>John Wilson</TableCell>
+                    <TableCell>Kitchen Staff</TableCell>
+                    <TableCell>2:00 PM - 10:00 PM</TableCell>
+                    <TableCell>8h</TableCell>
+                    <TableCell><Badge variant="secondary">Upcoming</Badge></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Revenue Tab */}
+        <TabsContent value="revenue" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Daily Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">${revenueStats.dailyRevenue.toFixed(2)}</div>
+                <p className="text-sm text-green-600">+12.5% vs yesterday</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Monthly Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">${revenueStats.monthlyRevenue.toFixed(2)}</div>
+                <p className="text-sm text-green-600">+8.3% vs last month</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Average Order
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">${revenueStats.avgOrderValue.toFixed(2)}</div>
+                <p className="text-sm text-blue-600">Per order value</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Profit Margin
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{revenueStats.profitMargin}%</div>
+                <p className="text-sm text-green-600">Above target</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue Breakdown</CardTitle>
+                <CardDescription>Today's sales by category</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span>Sandwiches</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-20 bg-secondary rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: "45%" }}></div>
+                    </div>
+                    <span className="font-bold">$1,278</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Salads</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-20 bg-secondary rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: "30%" }}></div>
+                    </div>
+                    <span className="font-bold">$852</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Beverages</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-20 bg-secondary rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: "20%" }}></div>
+                    </div>
+                    <span className="font-bold">$568</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Desserts</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-20 bg-secondary rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: "15%" }}></div>
+                    </div>
+                    <span className="font-bold">$426</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Selling Items</CardTitle>
+                <CardDescription>Best performers today</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Item</TableHead>
+                      <TableHead>Sold</TableHead>
+                      <TableHead>Revenue</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Grilled Chicken Sandwich</TableCell>
+                      <TableCell>32</TableCell>
+                      <TableCell>$415.68</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Caesar Salad</TableCell>
+                      <TableCell>28</TableCell>
+                      <TableCell>$279.72</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Coffee</TableCell>
+                      <TableCell>45</TableCell>
+                      <TableCell>$157.50</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Margherita Pizza</TableCell>
+                      <TableCell>18</TableCell>
+                      <TableCell>$287.82</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Methods</CardTitle>
+              <CardDescription>Revenue by payment type today</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">$1,420</div>
+                  <p className="text-sm text-muted-foreground">Credit Card (50%)</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">$852</div>
+                  <p className="text-sm text-muted-foreground">Cash (30%)</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">$426</div>
+                  <p className="text-sm text-muted-foreground">Mobile Pay (15%)</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">$142</div>
+                  <p className="text-sm text-muted-foreground">Other (5%)</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Users Tab */}
         <TabsContent value="users" className="space-y-4">
