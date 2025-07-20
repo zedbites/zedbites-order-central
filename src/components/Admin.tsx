@@ -689,37 +689,146 @@ export default function Admin() {
           )}
 
           {activeSection === "payroll" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-6">
+              {/* Payroll Overview Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Monthly Payroll</CardTitle>
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">K45,680</div>
+                    <p className="text-xs text-muted-foreground">+8% from last month</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Employees Paid</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">22</div>
+                    <p className="text-xs text-muted-foreground">of 24 total staff</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">2</div>
+                    <p className="text-xs text-muted-foreground">K3,400 total</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Employee Payroll Management */}
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Monthly Payroll</CardTitle>
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <CardHeader>
+                  <CardTitle>Employee Payroll</CardTitle>
+                  <CardDescription>Manage staff salaries and payment processing</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">K45,680</div>
-                  <p className="text-xs text-muted-foreground">+8% from last month</p>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Position</TableHead>
+                        <TableHead>Monthly Salary</TableHead>
+                        <TableHead>Hours Worked</TableHead>
+                        <TableHead>Bonus</TableHead>
+                        <TableHead>Total Pay</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">John Admin</TableCell>
+                        <TableCell>Manager</TableCell>
+                        <TableCell>K2,500</TableCell>
+                        <TableCell>160h</TableCell>
+                        <TableCell>K500</TableCell>
+                        <TableCell className="font-medium">K3,000</TableCell>
+                        <TableCell>
+                          <Badge variant="default">Paid</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            View Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Sarah Manager</TableCell>
+                        <TableCell>Supervisor</TableCell>
+                        <TableCell>K2,200</TableCell>
+                        <TableCell>155h</TableCell>
+                        <TableCell>K300</TableCell>
+                        <TableCell className="font-medium">K2,500</TableCell>
+                        <TableCell>
+                          <Badge variant="default">Paid</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            View Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Mike Staff</TableCell>
+                        <TableCell>Kitchen Staff</TableCell>
+                        <TableCell>K1,800</TableCell>
+                        <TableCell>150h</TableCell>
+                        <TableCell>K200</TableCell>
+                        <TableCell className="font-medium">K2,000</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">Pending</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="default" size="sm">
+                            Process Payment
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Lisa Cook</TableCell>
+                        <TableCell>Head Chef</TableCell>
+                        <TableCell>K2,000</TableCell>
+                        <TableCell>140h</TableCell>
+                        <TableCell>K400</TableCell>
+                        <TableCell className="font-medium">K2,400</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">Pending</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="default" size="sm">
+                            Process Payment
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Employees Paid</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">22</div>
-                  <p className="text-xs text-muted-foreground">of 24 total staff</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">2</div>
-                  <p className="text-xs text-muted-foreground">K3,400 total</p>
-                </CardContent>
-              </Card>
+
+              {/* Quick Actions */}
+              <div className="flex gap-4">
+                <Button className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4" />
+                  Process All Pending
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Generate Payroll Report
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Payroll Settings
+                </Button>
+              </div>
             </div>
           )}
 
