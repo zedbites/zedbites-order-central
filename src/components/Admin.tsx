@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe } from "lucide-react";
+import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import StoreIntegration from "./StoreIntegration";
 
@@ -204,7 +204,7 @@ export default function Admin() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             Overview
@@ -228,6 +228,10 @@ export default function Admin() {
           <TabsTrigger value="revenue" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
             Revenue
+          </TabsTrigger>
+          <TabsTrigger value="payroll" className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4" />
+            Payroll
           </TabsTrigger>
           <TabsTrigger value="store-sync" className="flex items-center gap-2">
             <Globe className="h-4 w-4" />
@@ -633,6 +637,172 @@ export default function Admin() {
                   <div className="text-2xl font-bold">K142</div>
                   <p className="text-sm text-muted-foreground">Other (5%)</p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Payroll Tab */}
+        <TabsContent value="payroll" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Monthly Payroll</CardTitle>
+                <CreditCard className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">K45,680</div>
+                <p className="text-xs text-muted-foreground">+8% from last month</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Employees Paid</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">22</div>
+                <p className="text-xs text-muted-foreground">of 24 total staff</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">2</div>
+                <p className="text-xs text-muted-foreground">K3,400 total</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Employee Salaries */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Employee Salaries</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Employee</TableHead>
+                      <TableHead>Position</TableHead>
+                      <TableHead>Salary</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>John Mukambo</TableCell>
+                      <TableCell>Head Chef</TableCell>
+                      <TableCell>K3,500</TableCell>
+                      <TableCell><Badge className="bg-success text-success-foreground">Paid</Badge></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Mary Tembo</TableCell>
+                      <TableCell>Server</TableCell>
+                      <TableCell>K1,800</TableCell>
+                      <TableCell><Badge className="bg-success text-success-foreground">Paid</Badge></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Peter Banda</TableCell>
+                      <TableCell>Kitchen Assistant</TableCell>
+                      <TableCell>K1,200</TableCell>
+                      <TableCell><Badge className="bg-warning text-warning-foreground">Pending</Badge></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Susan Mwanza</TableCell>
+                      <TableCell>Cashier</TableCell>
+                      <TableCell>K2,200</TableCell>
+                      <TableCell><Badge className="bg-warning text-warning-foreground">Pending</Badge></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Recent Payments */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Payments</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-border pb-2">
+                    <div>
+                      <p className="font-medium">John Mukambo</p>
+                      <p className="text-sm text-muted-foreground">December 2024 Salary</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">K3,500</p>
+                      <p className="text-xs text-muted-foreground">Dec 30</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-border pb-2">
+                    <div>
+                      <p className="font-medium">Mary Tembo</p>
+                      <p className="text-sm text-muted-foreground">December 2024 Salary</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">K1,800</p>
+                      <p className="text-xs text-muted-foreground">Dec 30</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between border-b border-border pb-2">
+                    <div>
+                      <p className="font-medium">David Phiri</p>
+                      <p className="text-sm text-muted-foreground">Bonus Payment</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">K500</p>
+                      <p className="text-xs text-muted-foreground">Dec 28</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Grace Mbewe</p>
+                      <p className="text-sm text-muted-foreground">November 2024 Salary</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">K1,900</p>
+                      <p className="text-xs text-muted-foreground">Nov 30</p>
+                    </div>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full mt-4">
+                  View All Payments
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Payroll Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Payroll Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Button className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4" />
+                  Process Payroll
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Employee
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Edit className="h-4 w-4" />
+                  Adjust Salaries
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  View Reports
+                </Button>
               </div>
             </CardContent>
           </Card>
