@@ -10,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard } from "lucide-react";
+import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard, Receipt } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import StoreIntegration from "./StoreIntegration";
+import ManualSalesEntry from "./ManualSalesEntry";
 
 interface User {
   id: string;
@@ -204,7 +205,7 @@ export default function Admin() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             Overview
@@ -228,6 +229,10 @@ export default function Admin() {
           <TabsTrigger value="revenue" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
             Revenue
+          </TabsTrigger>
+          <TabsTrigger value="sales-entry" className="flex items-center gap-2">
+            <Receipt className="h-4 w-4" />
+            Sales Entry
           </TabsTrigger>
           <TabsTrigger value="payroll" className="flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
@@ -806,6 +811,11 @@ export default function Admin() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Sales Entry Tab */}
+        <TabsContent value="sales-entry" className="space-y-4">
+          <ManualSalesEntry />
         </TabsContent>
 
         {/* Store Sync Tab */}
