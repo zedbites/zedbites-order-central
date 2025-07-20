@@ -4,7 +4,7 @@ import Dashboard from "@/components/Dashboard";
 import Orders from "@/components/Orders";
 import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
-import Admin from "@/components/Admin";
+import AdminLogin from "@/components/AdminLogin";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -30,7 +30,7 @@ const Index = () => {
           </div>
         );
       case "admin":
-        return <Admin />;
+        return <AdminLogin />;
       default:
         return <Dashboard />;
     }
