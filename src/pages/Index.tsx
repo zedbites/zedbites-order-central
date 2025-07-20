@@ -4,6 +4,7 @@ import Dashboard from "@/components/Dashboard";
 import Orders from "@/components/Orders";
 import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
+import Admin from "@/components/Admin";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -29,15 +30,7 @@ const Index = () => {
           </div>
         );
       case "admin":
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-muted-foreground">Manage meals, ingredients, and users</p>
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Admin panel coming soon...</p>
-            </div>
-          </div>
-        );
+        return <Admin />;
       default:
         return <Dashboard />;
     }
