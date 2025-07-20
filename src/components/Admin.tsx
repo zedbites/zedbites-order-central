@@ -62,6 +62,7 @@ interface RevenueStats {
 
 export default function Admin() {
   const { toast } = useToast();
+  const [activeSection, setActiveSection] = useState("overview");
 
   // HR and Revenue Stats
   const [hrStats] = useState<HRStats>({
@@ -205,52 +206,124 @@ export default function Admin() {
         </Badge>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-10">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="users" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Users
-          </TabsTrigger>
-          <TabsTrigger value="meals" className="flex items-center gap-2">
-            <Utensils className="h-4 w-4" />
-            Meals
-          </TabsTrigger>
-          <TabsTrigger value="ingredients" className="flex items-center gap-2">
-            <Package className="h-4 w-4" />
-            Ingredients
-          </TabsTrigger>
-          <TabsTrigger value="hr" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            HR Stats
-          </TabsTrigger>
-          <TabsTrigger value="revenue" className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            Revenue
-          </TabsTrigger>
-          <TabsTrigger value="sales-entry" className="flex items-center gap-2">
-            <Receipt className="h-4 w-4" />
-            Sales Entry
-          </TabsTrigger>
-          <TabsTrigger value="expenses" className="flex items-center gap-2">
-            <TrendingDown className="h-4 w-4" />
-            Expenses
-          </TabsTrigger>
-          <TabsTrigger value="payroll" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
-            Payroll
-          </TabsTrigger>
-          <TabsTrigger value="store-sync" className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
-            Store Sync
-          </TabsTrigger>
-        </TabsList>
+      <div className="space-y-6">
+        {/* Navigation Tiles */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("overview")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <TrendingUp className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Overview</h3>
+              <p className="text-xs text-muted-foreground mt-1">Dashboard</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("users")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Users className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Users</h3>
+              <p className="text-xs text-muted-foreground mt-1">Manage accounts</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("meals")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Utensils className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Meals</h3>
+              <p className="text-xs text-muted-foreground mt-1">Menu items</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("ingredients")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Package className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Ingredients</h3>
+              <p className="text-xs text-muted-foreground mt-1">Inventory</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("hr")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Users className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">HR Stats</h3>
+              <p className="text-xs text-muted-foreground mt-1">Staff metrics</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("revenue")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <DollarSign className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Revenue</h3>
+              <p className="text-xs text-muted-foreground mt-1">Sales data</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("sales-entry")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Receipt className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Sales Entry</h3>
+              <p className="text-xs text-muted-foreground mt-1">Manual sales</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("expenses")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <TrendingDown className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Expenses</h3>
+              <p className="text-xs text-muted-foreground mt-1">Cost tracking</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("payroll")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <CreditCard className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Payroll</h3>
+              <p className="text-xs text-muted-foreground mt-1">Staff payments</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer hover-scale transition-all duration-200 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("store-sync")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Globe className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Store Sync</h3>
+              <p className="text-xs text-muted-foreground mt-1">Integration</p>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
+        {/* Content Section */}
+        <div className="animate-fade-in">
+          {activeSection === "overview" && (
+            <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
