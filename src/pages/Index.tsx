@@ -67,8 +67,7 @@ const Index = () => {
   return (
     <>
       <InstallPrompt />
-      <ShortcutsDialog />
-      <Layout 
+      <Layout
         activeTab={activeTab} 
         onTabChange={setActiveTab}
         onSearch={handleSearch}
