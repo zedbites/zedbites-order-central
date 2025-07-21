@@ -10,13 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard, Receipt, TrendingDown, ImageIcon, Upload } from "lucide-react";
+import { Users, Utensils, Package, Settings, Plus, Edit, Trash2, Shield, Eye, EyeOff, TrendingUp, DollarSign, Calendar, Clock, Globe, CreditCard, Receipt, TrendingDown, ImageIcon, Upload, Mail } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import StoreIntegration from "./StoreIntegration";
 import ManualSalesEntry from "./ManualSalesEntry";
 import ExpenseManagement from "./ExpenseManagement";
+import EmailReports from "./EmailReports";
 
 interface User {
   id: string;
@@ -373,6 +374,17 @@ export default function Admin() {
               <Globe className="h-8 w-8 mb-3 text-primary" />
               <h3 className="font-semibold text-sm">Store Sync</h3>
               <p className="text-xs text-muted-foreground mt-1">Integration</p>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg border-2 hover:border-primary/20"
+            onClick={() => setActiveSection("reports")}
+          >
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <Mail className="h-8 w-8 mb-3 text-primary" />
+              <h3 className="font-semibold text-sm">Reports</h3>
+              <p className="text-xs text-muted-foreground mt-1">Email automation</p>
             </CardContent>
           </Card>
         </div>
@@ -945,6 +957,7 @@ export default function Admin() {
           {activeSection === "sales-entry" && <ManualSalesEntry />}
           {activeSection === "expenses" && <ExpenseManagement />}
           {activeSection === "store-sync" && <StoreIntegration />}
+          {activeSection === "reports" && <EmailReports />}
         </div>
       </div>
     </div>
