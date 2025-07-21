@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, AlertCircle, CheckCircle } from "lucide-react";
+import { Shield, AlertCircle, CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +15,11 @@ export default function AdminLogin() {
   const { user, loading } = useAuth();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
   const { toast } = useToast();
 
   // Check if current user is admin
@@ -78,6 +85,40 @@ export default function AdminLogin() {
     }
   };
 
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    setLoginError("");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          setLoginError("Invalid email or password. Please check your credentials.");
+        } else {
+          setLoginError(error.message);
+        }
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Welcome back!",
+          description: "Successfully logged in to ZedBites Admin.",
+        });
+        // The useEffect will handle checking admin status after login
+      }
+    } catch (error) {
+      setLoginError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
   if (loading || checkingAdmin) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -88,7 +129,7 @@ export default function AdminLogin() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
@@ -96,27 +137,79 @@ export default function AdminLogin() {
                 <Shield className="h-8 w-8 text-primary" />
               </div>
             </div>
-            <CardTitle className="text-2xl">Admin Access Required</CardTitle>
+            <CardTitle className="text-2xl">Admin Login</CardTitle>
             <CardDescription>
-              You must be logged in to access the admin panel
+              Sign in to access the ZedBites admin panel
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Please log in with your ZedBites account to continue. 
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-email">Email</Label>
+                <Input
+                  id="admin-email"
+                  type="email"
+                  placeholder="Enter your admin email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loginLoading}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="admin-password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="admin-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loginLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              {loginError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{loginError}</AlertDescription>
+                </Alert>
+              )}
+
+              <Button type="submit" className="w-full" disabled={loginLoading}>
+                {loginLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Sign In to Admin Panel
+              </Button>
+            </form>
+
+            <div className="mt-4 text-center">
+              <Button 
+                variant="link" 
+                onClick={() => window.location.href = '/auth'}
+                className="text-sm text-muted-foreground"
+              >
+                Or go to main login page
+              </Button>
+            </div>
+
+            <Alert className="mt-4">
+              <Shield className="h-4 w-4" />
+              <AlertDescription className="text-xs">
                 Admin access is restricted to authorized users only.
               </AlertDescription>
             </Alert>
-            <div className="mt-4">
-              <Button 
-                onClick={() => window.location.href = '/auth'} 
-                className="w-full"
-              >
-                Go to Login
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
