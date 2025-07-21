@@ -91,8 +91,53 @@ const handler = async (req: Request): Promise<Response> => {
       case 'POST': {
         if (path === 'recipients') {
           // Add new email recipient
-          const body = await req.json();
+          let body;
+          try {
+            const requestText = await req.text();
+            if (!requestText) {
+              throw new Error('Request body is empty');
+            }
+            body = JSON.parse(requestText);
+          } catch (parseError) {
+            console.error('JSON parsing error:', parseError);
+            return new Response(
+              JSON.stringify({ error: 'Invalid JSON in request body' }),
+              { 
+                status: 400, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
+
           const { email_type, recipient_email, recipient_name } = body;
+
+          if (!email_type || !recipient_email) {
+            return new Response(
+              JSON.stringify({ error: 'email_type and recipient_email are required' }),
+              { 
+                status: 400, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
+
+          // Check if recipient already exists for this email type
+          const { data: existing } = await supabaseAuth
+            .from('email_settings')
+            .select('id')
+            .eq('email_type', email_type)
+            .eq('recipient_email', recipient_email)
+            .single();
+
+          if (existing) {
+            return new Response(
+              JSON.stringify({ error: 'This email is already configured for this email type' }),
+              { 
+                status: 409, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
 
           const { data, error } = await supabaseAuth
             .from('email_settings')
@@ -164,8 +209,35 @@ const handler = async (req: Request): Promise<Response> => {
       case 'PUT': {
         if (path === 'recipients') {
           // Update email recipient
-          const body = await req.json();
+          let body;
+          try {
+            const requestText = await req.text();
+            if (!requestText) {
+              throw new Error('Request body is empty');
+            }
+            body = JSON.parse(requestText);
+          } catch (parseError) {
+            console.error('JSON parsing error:', parseError);
+            return new Response(
+              JSON.stringify({ error: 'Invalid JSON in request body' }),
+              { 
+                status: 400, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
+
           const { id, ...updates } = body;
+
+          if (!id) {
+            return new Response(
+              JSON.stringify({ error: 'ID is required for update' }),
+              { 
+                status: 400, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
 
           const { data, error } = await supabaseAuth
             .from('email_settings')
@@ -191,8 +263,35 @@ const handler = async (req: Request): Promise<Response> => {
       case 'DELETE': {
         if (path === 'recipients') {
           // Delete email recipient
-          const body = await req.json();
+          let body;
+          try {
+            const requestText = await req.text();
+            if (!requestText) {
+              throw new Error('Request body is empty');
+            }
+            body = JSON.parse(requestText);
+          } catch (parseError) {
+            console.error('JSON parsing error:', parseError);
+            return new Response(
+              JSON.stringify({ error: 'Invalid JSON in request body' }),
+              { 
+                status: 400, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
+
           const { id } = body;
+
+          if (!id) {
+            return new Response(
+              JSON.stringify({ error: 'ID is required for deletion' }),
+              { 
+                status: 400, 
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            );
+          }
 
           const { error } = await supabaseAuth
             .from('email_settings')
