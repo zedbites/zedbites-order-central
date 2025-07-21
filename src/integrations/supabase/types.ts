@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_logs: {
+        Row: {
+          data_snapshot: Json | null
+          email_type: string
+          error_message: string | null
+          id: string
+          recipient_email: string
+          sent_at: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          data_snapshot?: Json | null
+          email_type: string
+          error_message?: string | null
+          id?: string
+          recipient_email: string
+          sent_at?: string
+          status: string
+          subject: string
+        }
+        Update: {
+          data_snapshot?: Json | null
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          recipient_email?: string
+          sent_at?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
+      email_settings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email_type: string
+          id: string
+          is_active: boolean
+          recipient_email: string
+          recipient_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email_type: string
+          id?: string
+          is_active?: boolean
+          recipient_email: string
+          recipient_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email_type?: string
+          id?: string
+          is_active?: boolean
+          recipient_email?: string
+          recipient_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

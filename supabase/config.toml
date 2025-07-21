@@ -1,1 +1,10 @@
 project_id = "qoljdvksctxlkpofkljw"
+
+[functions.daily-data-capture]
+verify_jwt = false
+
+[functions.weekly-business-report]
+verify_jwt = false
+
+[functions.email-management]
+verify_jwt = true
