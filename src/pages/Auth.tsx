@@ -103,61 +103,6 @@ const Auth = () => {
     }
   };
 
-  const handleAdminLogin = async () => {
-    // Set admin credentials for quick login
-    setEmail("admin@zedbites.com");
-    setPassword("Zedbites2025!");
-    setLoading(true);
-    setError("");
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: "admin@zedbites.com",
-        password: "Zedbites2025!",
-      });
-
-      if (error) {
-        // If admin account doesn't exist, create it
-        if (error.message.includes("Invalid login credentials")) {
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: "admin@zedbites.com",
-            password: "Zedbites2025!",
-            options: {
-              emailRedirectTo: `${window.location.origin}/`,
-            },
-          });
-
-          if (signUpError) {
-            setError("Failed to create admin account: " + signUpError.message);
-            return;
-          }
-
-          if (signUpData.user) {
-            toast({
-              title: "Admin account created!",
-              description: "Welcome to ZedBites admin panel.",
-            });
-            navigate("/");
-          }
-        } else {
-          setError(error.message);
-        }
-        return;
-      }
-
-      if (data.user) {
-        toast({
-          title: "Admin login successful!",
-          description: "Welcome to ZedBites admin panel.",
-        });
-        navigate("/");
-      }
-    } catch (error) {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
@@ -201,7 +146,7 @@ const Auth = () => {
                   <Input
                     id="signin-email"
                     type="email"
-                    placeholder="admin@zedbites.com"
+                    placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -239,22 +184,10 @@ const Auth = () => {
                   </Alert>
                 )}
 
-                <div className="space-y-2">
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Sign In
-                  </Button>
-
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    className="w-full" 
-                    onClick={handleAdminLogin}
-                    disabled={loading}
-                  >
-                    Quick Admin Login
-                  </Button>
-                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Sign In
+                </Button>
               </form>
             </TabsContent>
 
