@@ -104,6 +104,7 @@ const Auth = () => {
   };
 
   const handleAdminLogin = async () => {
+    // Set admin credentials for quick login
     setEmail("admin@zedbites.com");
     setPassword("Zedbites2025!");
     setLoading(true);
