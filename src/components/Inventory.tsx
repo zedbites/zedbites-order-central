@@ -22,7 +22,7 @@ export default function Inventory() {
       name: "Tomatoes",
       category: "Vegetables",
       currentStock: 2,
-      threshold: 10,
+      threshold: 1,
       unit: "kg",
       costPerUnit: 15,
       supplier: "Fresh Farms Ltd"
@@ -32,7 +32,7 @@ export default function Inventory() {
       name: "Onions", 
       category: "Vegetables",
       currentStock: 3,
-      threshold: 15,
+      threshold: 1,
       unit: "kg",
       costPerUnit: 12,
       supplier: "Fresh Farms Ltd"
@@ -52,7 +52,7 @@ export default function Inventory() {
       name: "Salt",
       category: "Seasoning", 
       currentStock: 0.5,
-      threshold: 2,
+      threshold: 1,
       unit: "kg",
       costPerUnit: 8,
       supplier: "Kitchen Supplies Co"
@@ -62,7 +62,7 @@ export default function Inventory() {
       name: "Rice",
       category: "Grains",
       currentStock: 25,
-      threshold: 10,
+      threshold: 1,
       unit: "kg", 
       costPerUnit: 18,
       supplier: "Grain Masters"
@@ -72,7 +72,7 @@ export default function Inventory() {
       name: "Chicken",
       category: "Protein",
       currentStock: 12,
-      threshold: 8,
+      threshold: 1,
       unit: "kg",
       costPerUnit: 45,
       supplier: "Fresh Meat Co"
@@ -82,7 +82,7 @@ export default function Inventory() {
       name: "Beef",
       category: "Protein", 
       currentStock: 8,
-      threshold: 5,
+      threshold: 1,
       unit: "kg",
       costPerUnit: 65,
       supplier: "Fresh Meat Co"
@@ -92,7 +92,7 @@ export default function Inventory() {
       name: "Fish",
       category: "Protein",
       currentStock: 6,
-      threshold: 4,
+      threshold: 1,
       unit: "kg",
       costPerUnit: 55,
       supplier: "Ocean Fresh"
