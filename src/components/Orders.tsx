@@ -94,76 +94,86 @@ export default function Orders() {
   };
 
   const OrderCard = ({ order }: { order: any }) => (
-    <Card className="shadow-card">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{order.order_number}</CardTitle>
-          <Badge className={getStatusColor(order.status)}>
-            {getStatusIcon(order.status)}
-            <span className="ml-1 capitalize">{order.status}</span>
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Customer Info */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium">{order.customer_name}</span>
+    <div className="p-4 border border-border rounded-lg bg-card hover:shadow-md transition-shadow">
+      {/* Top row with order number and status */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="font-mono text-sm font-semibold">{order.order_number}</span>
+        <Badge className={getStatusColor(order.status)}>
+          {getStatusIcon(order.status)}
+          <span className="ml-1 capitalize">{order.status}</span>
+        </Badge>
+      </div>
+
+      {/* Customer info row */}
+      <div className="flex items-center gap-2 mb-2">
+        <User className="h-4 w-4 text-muted-foreground" />
+        <span className="font-medium text-sm">{order.customer_name}</span>
+      </div>
+
+      {/* Contact info */}
+      <div className="space-y-1 mb-3">
+        {order.customer_phone && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Phone className="h-3 w-3" />
+            <span>{order.customer_phone}</span>
           </div>
-          {order.customer_phone && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Phone className="h-4 w-4" />
-              <span>{order.customer_phone}</span>
+        )}
+        {order.customer_address && (
+          <div className="flex items-start gap-2 text-xs text-muted-foreground">
+            <MapPin className="h-3 w-3 mt-0.5" />
+            <span className="line-clamp-2">{order.customer_address}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Items summary */}
+      <div className="mb-3">
+        <div className="text-xs text-muted-foreground mb-1">
+          {order.items.length} item{order.items.length > 1 ? 's' : ''}
+        </div>
+        <div className="text-sm">
+          {order.items.slice(0, 2).map((item: any, index: number) => (
+            <div key={index} className="text-xs text-muted-foreground">
+              {item.quantity}x {item.item_name}
+            </div>
+          ))}
+          {order.items.length > 2 && (
+            <div className="text-xs text-muted-foreground">
+              +{order.items.length - 2} more...
             </div>
           )}
-          {order.customer_address && (
-            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4 mt-0.5" />
-              <span>{order.customer_address}</span>
-            </div>
+        </div>
+      </div>
+
+      {/* Total and time */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="font-semibold text-lg">K{order.total_amount.toFixed(2)}</span>
+        <div className="text-right">
+          <div className="text-xs text-muted-foreground">Ordered: {order.order_time}</div>
+          {order.estimated_delivery && (
+            <div className="text-xs text-muted-foreground">ETA: {order.estimated_delivery}</div>
           )}
         </div>
+      </div>
 
-        {/* Order Items */}
-        <div className="border-t border-border pt-3">
-          <h4 className="font-medium mb-2">Items:</h4>
-          <div className="space-y-1">
-            {order.items.map((item: any, index: number) => (
-              <div key={index} className="flex justify-between text-sm">
-                <span>{item.quantity}x {item.item_name}</span>
-                <span>K{(item.price * item.quantity).toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between font-semibold text-base mt-2 pt-2 border-t border-border">
-            <span>Total:</span>
-            <span>K{order.total_amount.toFixed(2)}</span>
-          </div>
-        </div>
-
-        {/* Time Info */}
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>Ordered: {order.order_time}</span>
-          {order.estimated_delivery && <span>ETA: {order.estimated_delivery}</span>}
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2">
-          {order.status !== 'delivered' && (
-            <Button 
-              className="flex-1"
-              onClick={() => handleStatusUpdate(order.id, getNextStatus(order.status))}
-            >
-              {getNextStatusLabel(order.status)}
-            </Button>
-          )}
+      {/* Action buttons */}
+      <div className="flex gap-2">
+        {order.status !== 'delivered' && (
+          <Button 
+            size="sm"
+            className="flex-1 text-xs"
+            onClick={() => handleStatusUpdate(order.id, getNextStatus(order.status))}
+          >
+            {getNextStatusLabel(order.status)}
+          </Button>
+        )}
+        
+        <div className="flex gap-1">
           {order.status === 'dispatched' && (
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Navigation className="h-4 w-4 mr-1" />
-                  Track
+                <Button variant="outline" size="sm" className="p-2">
+                  <Navigation className="h-3 w-3" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -179,14 +189,18 @@ export default function Orders() {
             </Dialog>
           )}
           {order.customer_phone && (
-            <Button variant="outline" size="sm" onClick={() => window.open(`tel:${order.customer_phone}`)}>
-              <Phone className="h-4 w-4 mr-1" />
-              Call
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="p-2"
+              onClick={() => window.open(`tel:${order.customer_phone}`)}
+            >
+              <Phone className="h-3 w-3" />
             </Button>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 
   return (
