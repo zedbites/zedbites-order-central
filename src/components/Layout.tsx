@@ -13,7 +13,8 @@ import {
   Bell,
   Search,
   LogOut,
-  User
+  User,
+  Mail
 } from "lucide-react";
 import SearchBar from "@/components/common/SearchBar";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,6 +33,7 @@ const navigation = [
   { id: 'orders', name: 'Orders', icon: ShoppingCart },
   { id: 'inventory', name: 'Inventory', icon: Package },
   { id: 'recipes', name: 'Recipes', icon: ChefHat },
+  { id: 'reports', name: 'Reports', icon: Mail },
   { id: 'admin', name: 'Admin', icon: Settings },
 ];
 

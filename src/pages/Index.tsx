@@ -5,6 +5,7 @@ import Dashboard from "@/components/Dashboard";
 import Orders from "@/components/Orders";
 import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
+import EmailReports from "@/components/EmailReports";
 import AdminLogin from "@/components/AdminLogin";
 import FloatingActionButton from "@/components/layout/FloatingActionButton";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -73,15 +74,7 @@ const Index = () => {
       case "recipes":
         return <Recipes />;
       case "reports":
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Reports</h1>
-            <p className="text-muted-foreground">Export sales and inventory reports</p>
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Reports section coming soon...</p>
-            </div>
-          </div>
-        );
+        return <EmailReports />;
       case "admin":
         return <AdminLogin />;
       default:
