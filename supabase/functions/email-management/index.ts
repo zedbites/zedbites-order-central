@@ -22,33 +22,13 @@ const handler = async (req: Request): Promise<Response> => {
     const url = new URL(req.url);
     const path = url.pathname.split('/').pop();
 
-    // Get authorization header
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Create authenticated supabase client
-    const supabaseAuth = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: {
-            Authorization: authHeader,
-          },
-        },
-      }
-    );
+    // Use regular supabase client (no auth required)
 
     switch (method) {
       case 'GET': {
         if (path === 'recipients') {
           // Get all email recipients
-          const { data, error } = await supabaseAuth
+          const { data, error } = await supabase
             .from('email_settings')
             .select('*')
             .order('email_type', { ascending: true })
@@ -68,7 +48,7 @@ const handler = async (req: Request): Promise<Response> => {
         if (path === 'logs') {
           // Get email logs
           const limit = url.searchParams.get('limit') || '50';
-          const { data, error } = await supabaseAuth
+          const { data, error } = await supabase
             .from('email_logs')
             .select('*')
             .order('sent_at', { ascending: false })
@@ -122,7 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
           }
 
           // Check if recipient already exists for this email type
-          const { data: existing } = await supabaseAuth
+          const { data: existing } = await supabase
             .from('email_settings')
             .select('id')
             .eq('email_type', email_type)
@@ -139,13 +119,12 @@ const handler = async (req: Request): Promise<Response> => {
             );
           }
 
-          const { data, error } = await supabaseAuth
+          const { data, error } = await supabase
             .from('email_settings')
             .insert({
               email_type,
               recipient_email,
-              recipient_name,
-              created_by: (await supabaseAuth.auth.getUser()).data.user?.id
+              recipient_name
             })
             .select()
             .single();
@@ -166,7 +145,6 @@ const handler = async (req: Request): Promise<Response> => {
           const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/daily-data-capture`, {
             method: 'POST',
             headers: {
-              'Authorization': authHeader,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ test: true, manual: true }),
@@ -187,7 +165,6 @@ const handler = async (req: Request): Promise<Response> => {
           const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/weekly-business-report`, {
             method: 'POST',
             headers: {
-              'Authorization': authHeader,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ test: true, manual: true }),
@@ -239,7 +216,7 @@ const handler = async (req: Request): Promise<Response> => {
             );
           }
 
-          const { data, error } = await supabaseAuth
+          const { data, error } = await supabase
             .from('email_settings')
             .update(updates)
             .eq('id', id)
@@ -293,7 +270,7 @@ const handler = async (req: Request): Promise<Response> => {
             );
           }
 
-          const { error } = await supabaseAuth
+          const { error } = await supabase
             .from('email_settings')
             .delete()
             .eq('id', id);
