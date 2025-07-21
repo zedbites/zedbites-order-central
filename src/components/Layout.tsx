@@ -11,9 +11,13 @@ import {
   X,
   ChefHat,
   Bell,
-  Search
+  Search,
+  LogOut,
+  User
 } from "lucide-react";
 import SearchBar from "@/components/common/SearchBar";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -39,6 +43,24 @@ export default function Layout({
   notifications = 0 
 }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -86,7 +108,7 @@ export default function Layout({
             </div>
           )}
 
-          {/* Notifications */}
+          {/* User info and actions */}
           <div className="flex items-center space-x-2">
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="h-4 w-4" />
@@ -98,6 +120,25 @@ export default function Layout({
                   {notifications > 9 ? '9+' : notifications}
                 </Badge>
               )}
+            </Button>
+            
+            {/* User info */}
+            <div className="hidden md:flex items-center space-x-2 px-2 py-1 rounded-lg bg-muted/50">
+              <User className="h-4 w-4" />
+              <span className="text-sm font-medium truncate max-w-32">
+                {user?.email}
+              </span>
+            </div>
+            
+            {/* Logout button */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleSignOut}
+              title="Sign out"
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
