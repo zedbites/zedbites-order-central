@@ -34,18 +34,22 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   // Check if this is a scheduled call (from cron) or requires admin access
-  const body = await req.text();
-  const isScheduled = body && JSON.parse(body)?.scheduled === true;
-  
-  if (!isScheduled) {
-    // For manual calls, verify admin access
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'Authorization required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+  let requestBody = {};
+  try {
+    const bodyText = await req.text();
+    if (bodyText) {
+      requestBody = JSON.parse(bodyText);
     }
+  } catch (e) {
+    // Ignore JSON parse errors for empty bodies
+  }
+
+  const isScheduled = (requestBody as any)?.scheduled === true;
+  const isManual = (requestBody as any)?.manual === true;
+  
+  if (!isScheduled && !isManual) {
+    // This shouldn't happen with our current setup, but handle gracefully
+    console.log('Weekly report triggered without scheduled or manual flag');
   }
 
   try {
