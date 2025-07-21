@@ -47,7 +47,7 @@ export default function Layout({
         <img 
           src="/lovable-uploads/87977d41-0570-4006-badc-b1bbc6c1d90b.png" 
           alt="ZedBites Watermark" 
-          className="w-64 h-64 opacity-5 select-none"
+          className="w-64 h-64 opacity-10 select-none"
         />
       </div>
 
