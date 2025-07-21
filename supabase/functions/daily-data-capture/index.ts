@@ -28,6 +28,21 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Check if this is a scheduled call (from cron) or requires admin access
+  const body = await req.text();
+  const isScheduled = body && JSON.parse(body)?.scheduled === true;
+  
+  if (!isScheduled) {
+    // For manual calls, verify admin access
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+  }
+
   try {
     console.log('Daily data capture email job started');
 

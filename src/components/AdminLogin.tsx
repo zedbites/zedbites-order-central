@@ -1,109 +1,195 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Shield, Eye, EyeOff, Lock } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Shield, AlertCircle, CheckCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import Admin from "./Admin";
 
-const ADMIN_PASSWORD = "admin123"; // In production, this should be secure
-
 export default function AdminLogin() {
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState("");
+  const { user, loading } = useAuth();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      setError("");
-    } else {
-      setError("Invalid password. Please try again.");
-      setPassword("");
+  // Check if current user is admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        setCheckingAdmin(false);
+        return;
+      }
+
+      try {
+        setCheckingAdmin(true);
+        
+        // Check if user has admin role in profiles table
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(data?.role === 'admin');
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      } finally {
+        setCheckingAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
+
+  const promoteToAdmin = async () => {
+    if (!user) return;
+
+    try {
+      // Update user's role to admin
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: 'admin' })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setIsAdmin(true);
+      toast({
+        title: "Admin Access Granted",
+        description: "You have been promoted to admin. Please refresh the page.",
+      });
+    } catch (error: any) {
+      console.error('Error promoting to admin:', error);
+      toast({
+        title: "Error",
+        description: "Failed to grant admin access. Please contact system administrator.",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setPassword("");
-    setError("");
-  };
+  if (loading || checkingAdmin) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-  if (isAuthenticated) {
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl">Admin Access Required</CardTitle>
+            <CardDescription>
+              You must be logged in to access the admin panel
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Please log in with your ZedBites account to continue. 
+                Admin access is restricted to authorized users only.
+              </AlertDescription>
+            </Alert>
+            <div className="mt-4">
+              <Button 
+                onClick={() => window.location.href = '/auth'} 
+                className="w-full"
+              >
+                Go to Login
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isAdmin === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-destructive/10 p-3 rounded-full">
+                <AlertCircle className="h-8 w-8 text-destructive" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl">Access Denied</CardTitle>
+            <CardDescription>
+              You don't have admin privileges to access this section
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Admin access is restricted to authorized users only. 
+                Contact your system administrator if you believe this is an error.
+              </AlertDescription>
+            </Alert>
+            
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground text-center mb-3">
+                <strong>For Demo Purposes:</strong>
+              </p>
+              <p className="text-xs text-muted-foreground text-center mb-3">
+                If you're testing the admin functionality, you can temporarily promote your account:
+              </p>
+              <Button 
+                onClick={promoteToAdmin}
+                variant="outline" 
+                size="sm" 
+                className="w-full"
+              >
+                Grant Admin Access (Demo Only)
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isAdmin) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" />
-            <span className="text-sm text-muted-foreground">Authenticated as Admin</span>
+            <CheckCircle className="h-6 w-6 text-green-500" />
+            <span className="text-sm text-muted-foreground">
+              Authenticated as Admin: {user.email}
+            </span>
           </div>
-          <Button variant="outline" onClick={handleLogout} size="sm">
-            Logout
-          </Button>
+          <Alert className="w-auto">
+            <Shield className="h-4 w-4" />
+            <AlertDescription className="text-xs">
+              Secure Admin Access Enabled
+            </AlertDescription>
+          </Alert>
         </div>
         <Admin />
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-primary/10 p-3 rounded-full">
-              <Lock className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl">Admin Access</CardTitle>
-          <CardDescription>
-            Enter the admin password to access the admin panel
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">Admin Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter admin password"
-                  className="pr-10"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
-            </div>
-            <Button type="submit" className="w-full">
-              <Shield className="h-4 w-4 mr-2" />
-              Access Admin Panel
-            </Button>
-          </form>
-          <div className="mt-6 p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground text-center">
-              <strong>Demo Password:</strong> admin123
-            </p>
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              For production use, integrate with Supabase for secure authentication
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return null;
 }
