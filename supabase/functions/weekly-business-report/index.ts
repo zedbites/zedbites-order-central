@@ -216,7 +216,7 @@ const handler = async (req: Request): Promise<Response> => {
         `;
 
         const emailResponse = await resend.emails.send({
-          from: 'ZedBites Reports <reports@zedbites.com>',
+          from: 'ZedBites Reports <zedbites@gmail.com>',
           to: [recipient.recipient_email],
           subject: `ZedBites Weekly Business Report - Week of ${weeklyData.week_start}`,
           html: emailContent,
