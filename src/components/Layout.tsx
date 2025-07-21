@@ -41,7 +41,16 @@ export default function Layout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Watermark Logo */}
+      <div className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center">
+        <img 
+          src="/lovable-uploads/87977d41-0570-4006-badc-b1bbc6c1d90b.png" 
+          alt="ZedBites Watermark" 
+          className="w-64 h-64 opacity-5 select-none"
+        />
+      </div>
+
       {/* Top Navigation Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-sm">
         <div className="flex items-center justify-between h-16 px-4">
