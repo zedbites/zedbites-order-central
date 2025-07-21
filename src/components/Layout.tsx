@@ -33,7 +33,6 @@ const navigation = [
   { id: 'orders', name: 'Orders', icon: ShoppingCart },
   { id: 'inventory', name: 'Inventory', icon: Package },
   { id: 'recipes', name: 'Recipes', icon: ChefHat },
-  { id: 'reports', name: 'Reports', icon: Mail },
   { id: 'admin', name: 'Admin', icon: Settings },
 ];
 

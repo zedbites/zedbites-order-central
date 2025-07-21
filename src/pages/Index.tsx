@@ -5,7 +5,6 @@ import Dashboard from "@/components/Dashboard";
 import Orders from "@/components/Orders";
 import Inventory from "@/components/Inventory";
 import Recipes from "@/components/Recipes";
-import EmailReports from "@/components/EmailReports";
 import AdminLogin from "@/components/AdminLogin";
 import FloatingActionButton from "@/components/layout/FloatingActionButton";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -73,8 +72,6 @@ const Index = () => {
         return <Inventory />;
       case "recipes":
         return <Recipes />;
-      case "reports":
-        return <EmailReports />;
       case "admin":
         return <AdminLogin />;
       default:
