@@ -19,6 +19,21 @@ const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
+  // Keyboard shortcuts - must be defined before any conditional returns
+  const shortcuts = [
+    ...defaultShortcuts.map(shortcut => ({
+      ...shortcut,
+      action: () => {
+        if (shortcut.key === 'd') setActiveTab('dashboard');
+        else if (shortcut.key === 'o') setActiveTab('orders');
+        else if (shortcut.key === 'i') setActiveTab('inventory');
+        else shortcut.action();
+      }
+    }))
+  ];
+
+  useKeyboardShortcuts(shortcuts);
+
   // Redirect to auth page if not logged in
   useEffect(() => {
     if (!loading && !user) {
@@ -39,21 +54,6 @@ const Index = () => {
   if (!user) {
     return null;
   }
-
-  // Keyboard shortcuts
-  const shortcuts = [
-    ...defaultShortcuts.map(shortcut => ({
-      ...shortcut,
-      action: () => {
-        if (shortcut.key === 'd') setActiveTab('dashboard');
-        else if (shortcut.key === 'o') setActiveTab('orders');
-        else if (shortcut.key === 'i') setActiveTab('inventory');
-        else shortcut.action();
-      }
-    }))
-  ];
-
-  useKeyboardShortcuts(shortcuts);
 
   const handleSearch = (query: string) => {
     toast({
