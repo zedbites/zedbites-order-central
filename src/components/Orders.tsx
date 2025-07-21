@@ -18,94 +18,36 @@ import {
 import DeliveryTracker from "./DeliveryTracker";
 import ManualOrderEntry from "./ManualOrderEntry";
 import { useToast } from "@/hooks/use-toast";
+import { useOrders } from "@/hooks/useOrders";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 export default function Orders() {
   const [activeView, setActiveView] = useState("all");
   const { toast } = useToast();
-  const [orders, setOrders] = useState([
-    {
-      id: "ORD-001",
-      customer: "John Mukambo",
-      phone: "+260 97 123 4567",
-      address: "Plot 123, Chelstone, Lusaka",
-      items: [
-        { name: "Beef Stew", quantity: 2, price: 35 },
-        { name: "Rice", quantity: 1, price: 15 }
-      ],
-      total: 85,
-      status: "placed",
-      time: "10:30 AM",
-      estimatedDelivery: "11:15 AM"
-    },
-    {
-      id: "ORD-002",
-      customer: "Mary Tembo", 
-      phone: "+260 96 234 5678",
-      address: "House 45, Kabulonga, Lusaka",
-      items: [
-        { name: "Fish & Chips", quantity: 1, price: 55 }
-      ],
-      total: 55,
-      status: "cooking",
-      time: "10:15 AM",
-      estimatedDelivery: "11:00 AM"
-    },
-    {
-      id: "ORD-003",
-      customer: "Peter Banda",
-      phone: "+260 95 345 6789", 
-      address: "Flat 12, Woodlands, Lusaka",
-      items: [
-        { name: "Nshima & Chicken", quantity: 3, price: 40 }
-      ],
-      total: 120,
-      status: "dispatched",
-      time: "09:45 AM",
-      estimatedDelivery: "10:30 AM"
-    },
-    {
-      id: "ORD-004",
-      customer: "Grace Mwanza",
-      phone: "+260 97 456 7890",
-      address: "Shop 8, Northmead, Lusaka", 
-      items: [
-        { name: "Vegetable Curry", quantity: 2, price: 30 },
-        { name: "Chapati", quantity: 4, price: 5 }
-      ],
-      total: 80,
-      status: "delivered",
-      time: "09:30 AM",
-      estimatedDelivery: "10:15 AM"
-    }
-  ]);
+  const { orders, loading, updateOrderStatus, updateOrderLocation } = useOrders();
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Orders</h1>
+          <p className="text-muted-foreground">
+            Manage and track all customer orders
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
 
   const handleLocationUpdate = (orderId: string, location: { lat: number; lng: number }) => {
-    setOrders(prevOrders => 
-      prevOrders.map(order => 
-        order.id === orderId 
-          ? { 
-              ...order, 
-              currentLocation: { 
-                ...location, 
-                timestamp: new Date() 
-              } 
-            }
-          : order
-      )
-    );
+    updateOrderLocation(orderId, location);
   };
 
   const handleStatusUpdate = (orderId: string, newStatus: string) => {
-    setOrders(prevOrders => 
-      prevOrders.map(order => 
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-    
-    toast({
-      title: "Order Updated",
-      description: `Order ${orderId} status updated to ${newStatus}`,
-    });
+    updateOrderStatus(orderId, newStatus);
   };
 
   const getStatusIcon = (status: string) => {
@@ -155,7 +97,7 @@ export default function Orders() {
     <Card className="shadow-card">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{order.id}</CardTitle>
+          <CardTitle className="text-lg">{order.order_number}</CardTitle>
           <Badge className={getStatusColor(order.status)}>
             {getStatusIcon(order.status)}
             <span className="ml-1 capitalize">{order.status}</span>
@@ -167,16 +109,20 @@ export default function Orders() {
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
             <User className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium">{order.customer}</span>
+            <span className="font-medium">{order.customer_name}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Phone className="h-4 w-4" />
-            <span>{order.phone}</span>
-          </div>
-          <div className="flex items-start gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 mt-0.5" />
-            <span>{order.address}</span>
-          </div>
+          {order.customer_phone && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Phone className="h-4 w-4" />
+              <span>{order.customer_phone}</span>
+            </div>
+          )}
+          {order.customer_address && (
+            <div className="flex items-start gap-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4 mt-0.5" />
+              <span>{order.customer_address}</span>
+            </div>
+          )}
         </div>
 
         {/* Order Items */}
@@ -185,21 +131,21 @@ export default function Orders() {
           <div className="space-y-1">
             {order.items.map((item: any, index: number) => (
               <div key={index} className="flex justify-between text-sm">
-                <span>{item.quantity}x {item.name}</span>
-                <span>K{item.price * item.quantity}</span>
+                <span>{item.quantity}x {item.item_name}</span>
+                <span>K{(item.price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
           </div>
           <div className="flex justify-between font-semibold text-base mt-2 pt-2 border-t border-border">
             <span>Total:</span>
-            <span>K{order.total}</span>
+            <span>K{order.total_amount.toFixed(2)}</span>
           </div>
         </div>
 
         {/* Time Info */}
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>Ordered: {order.time}</span>
-          <span>ETA: {order.estimatedDelivery}</span>
+          <span>Ordered: {order.order_time}</span>
+          {order.estimated_delivery && <span>ETA: {order.estimated_delivery}</span>}
         </div>
 
         {/* Actions */}
@@ -222,7 +168,7 @@ export default function Orders() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Delivery Tracking - {order.id}</DialogTitle>
+                  <DialogTitle>Delivery Tracking - {order.order_number}</DialogTitle>
                 </DialogHeader>
                 <DeliveryTracker 
                   order={order}
@@ -232,10 +178,12 @@ export default function Orders() {
               </DialogContent>
             </Dialog>
           )}
-          <Button variant="outline" size="sm" onClick={() => window.open(`tel:${order.phone}`)}>
-            <Phone className="h-4 w-4 mr-1" />
-            Call
-          </Button>
+          {order.customer_phone && (
+            <Button variant="outline" size="sm" onClick={() => window.open(`tel:${order.customer_phone}`)}>
+              <Phone className="h-4 w-4 mr-1" />
+              Call
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

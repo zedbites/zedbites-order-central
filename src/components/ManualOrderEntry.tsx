@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2, User, Phone, MapPin, ShoppingCart, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useOrders } from "@/hooks/useOrders";
 
 interface MenuItem {
   id: string;
@@ -60,8 +61,9 @@ const menuItems: MenuItem[] = [
 
 export default function ManualOrderEntry() {
   const { toast } = useToast();
+  const { createOrder } = useOrders();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [orders, setOrders] = useState<ManualOrder[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Form state
   const [customerName, setCustomerName] = useState("");
@@ -128,7 +130,7 @@ export default function ManualOrderEntry() {
     return estimatedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     if (!customerName || orderItems.length === 0) {
       toast({
         title: "Error",
@@ -147,41 +149,34 @@ export default function ManualOrderEntry() {
       return;
     }
 
-    const subtotal = calculateSubtotal();
-    const tax = calculateTax(subtotal);
-    const total = calculateTotal();
+    setIsSubmitting(true);
 
-    const newOrder: ManualOrder = {
-      id: `ORD-${Date.now()}`,
-      customerName,
-      customerPhone,
-      customerAddress,
-      items: [...orderItems],
-      subtotal,
-      tax,
-      total,
-      status: 'placed',
-      orderType,
-      notes: orderNotes || undefined,
-      createdAt: new Date(),
-      estimatedTime: generateEstimatedTime()
-    };
-
-    setOrders(prev => [newOrder, ...prev]);
-    
-    // Reset form
-    setCustomerName("");
-    setCustomerPhone("");
-    setCustomerAddress("");
-    setOrderType('dine-in');
-    setOrderItems([]);
-    setOrderNotes("");
-    setIsDialogOpen(false);
-
-    toast({
-      title: "Success",
-      description: `Order ${newOrder.id} created successfully!`,
-    });
+    try {
+      await createOrder({
+        customer_name: customerName,
+        customer_phone: customerPhone || '',
+        customer_address: customerAddress || '',
+        items: orderItems.map(item => ({
+          item_name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        }))
+      });
+      
+      // Reset form
+      setCustomerName("");
+      setCustomerPhone("");
+      setCustomerAddress("");
+      setOrderType('dine-in');
+      setOrderItems([]);
+      setOrderNotes("");
+      setIsDialogOpen(false);
+    } catch (error) {
+      // Error is already handled in the hook
+      console.error('Error creating order:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -417,68 +412,12 @@ export default function ManualOrderEntry() {
         </Dialog>
       </div>
 
-      {/* Orders List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5" />
-            Manual Orders
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {orders.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No manual orders created yet</p>
-              <p className="text-sm">Click "Create Order" to add your first manual order</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Est. Time</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.map(order => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-mono">{order.id}</TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{order.customerName}</div>
-                        {order.customerPhone && (
-                          <div className="text-sm text-muted-foreground">{order.customerPhone}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getOrderTypeColor(order.orderType)}>
-                        {order.orderType.replace('-', ' ')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{order.items.length} items</TableCell>
-                    <TableCell className="font-semibold">K{order.total.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(order.status)}>
-                        {order.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{order.estimatedTime}</TableCell>
-                    <TableCell>{order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      {/* Order Creation Section */}
+      <div className="text-center py-8">
+        <p className="text-muted-foreground mb-4">
+          Orders created here will appear in the main Orders tab with real-time updates
+        </p>
+      </div>
     </div>
   );
 }
